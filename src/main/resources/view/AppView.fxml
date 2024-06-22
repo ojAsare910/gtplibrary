@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<TabPane fx:id="tabPane" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.justiceasare.gtplibrabry.controller.AppController">
+
+    <tabs>
+        <Tab fx:id="bookTab" text="Books" closable="false">
+            <content>
+                <AnchorPane>
+                    <TableView fx:id="bookTableView" AnchorPane.topAnchor="20.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+                        <columns>
+                            <TableColumn fx:id="bookTitleColumn" prefWidth="200.0" text="Title" />
+                            <TableColumn fx:id="bookCategoryColumn" prefWidth="200.0" text="Category" />
+                        </columns>
+                    </TableView>
+                    <HBox spacing="10" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="28.0">
+                        <Button onAction="#addBook" text="Add Book" />
+                        <Button onAction="#updateBook" text="Update Book" />
+                        <Button onAction="#deleteBook" text="Delete Book" />
+                    </HBox>
+                </AnchorPane>
+            </content>
+        </Tab>
+
+        <Tab fx:id="userTab" text="Users" closable="false">
+            <content>
+                <AnchorPane>
+                    <TableView fx:id="userTableView" AnchorPane.topAnchor="20.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+                        <columns>
+                            <TableColumn fx:id="usernameColumn" prefWidth="150.0" text="Username" />
+                            <TableColumn fx:id="emailColumn" prefWidth="200.0" text="Email" />
+                            <TableColumn fx:id="userTypeColumn" prefWidth="150.0" text="User Type" />
+                        </columns>
+                    </TableView>
+                    <HBox spacing="10" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="28.0">
+                        <Button onAction="#addUser" text="Add User" />
+                        <Button onAction="#updateUser" text="Update User" />
+                    </HBox>
+                </AnchorPane>
+            </content>
+        </Tab>
+
+        <Tab fx:id="fineTab" text="Fines" closable="false">
+            <content>
+                <AnchorPane>
+                    <TableView fx:id="fineUserTableView" AnchorPane.topAnchor="20.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+                        <columns>
+                            <TableColumn fx:id="fineUserNameColumn" prefWidth="100.0" text="Name" />
+                            <TableColumn fx:id="fineBookTitleColumn" prefWidth="100.0" text="Title" />
+                            <TableColumn fx:id="fineUserAmountColumn" prefWidth="100.0" text="Amount" />
+                            <TableColumn fx:id="fineUserPaidColumn" prefWidth="200.0" text="Paid" />
+                        </columns>
+                    </TableView>
+                    <HBox spacing="10" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="28.0">
+                        <Button onAction="#addFine" text="Add Fine" />
+                        <Button onAction="#updateFine" text="Update Fine" />
+                    </HBox>
+                </AnchorPane>
+            </content>
+        </Tab>
+
+        <Tab fx:id="reservationTab" text="Reservations" closable="false">
+            <content>
+                <AnchorPane>
+                    <TableView fx:id="reservationTableView" AnchorPane.topAnchor="20.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+                        <columns>
+                            <TableColumn fx:id="reservationIdColumn" prefWidth="100.0" text="Reservation ID" />
+                            <TableColumn fx:id="reservationPatronIdColumn" prefWidth="100.0" text="Patron ID" />
+                            <TableColumn fx:id="reservationBookIdColumn" prefWidth="100.0" text="Book ID" />
+                            <TableColumn fx:id="reservationDateColumn" prefWidth="200.0" text="Reservation Date" />
+                        </columns>
+                    </TableView>
+                    <HBox spacing="10" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="28.0">
+                        <Button onAction="#addReservation" text="Add Reservation" />
+                        <Button onAction="#updateReservation" text="Update Reservation" />
+                    </HBox>
+                </AnchorPane>
+            </content>
+        </Tab>
+
+        <Tab fx:id="transactionTab" text="Transactions" closable="false">
+            <content>
+                <AnchorPane>
+                    <TableView fx:id="transactionTableView" AnchorPane.topAnchor="20.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+                        <columns>
+                            <TableColumn fx:id="transactionIdColumn" prefWidth="100.0" text="Transaction ID" />
+                            <TableColumn fx:id="transactionUserIdColumn" prefWidth="100.0" text="User ID" />
+                            <TableColumn fx:id="copyIdColumn" prefWidth="100.0" text="Book ID" />
+                            <TableColumn fx:id="transactionTypeColumn" prefWidth="100.0" text="Transaction Type" />
+                            <TableColumn fx:id="transactionDateColumn" prefWidth="200.0" text="Transaction Date" />
+                        </columns>
+                    </TableView>
+                </AnchorPane>
+            </content>
+        </Tab>
+    </tabs>
+</TabPane>
