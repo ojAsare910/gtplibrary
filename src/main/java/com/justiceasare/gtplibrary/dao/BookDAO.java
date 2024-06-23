@@ -1,7 +1,7 @@
-package com.justiceasare.gtplibrabry.dao;
+package com.justiceasare.gtplibrary.dao;
 
-import com.justiceasare.gtplibrabry.model.Book;
-import com.justiceasare.gtplibrabry.util.DatabaseSource;
+import com.justiceasare.gtplibrary.model.Book;
+import com.justiceasare.gtplibrary.util.DatabaseSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,15 +50,4 @@ public class BookDAO {
         return false;
     }
 
-    public boolean deleteBook(int bookId) {
-        String query = "DELETE FROM Book WHERE book_id = ?";
-        try (Connection connection = DatabaseSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, bookId);
-            return statement.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
 }

@@ -1,4 +1,4 @@
-package com.justiceasare.gtplibrabry.model;
+package com.justiceasare.gtplibrary.model;
 
 public class BookCopy {
     private int copyId;
@@ -34,15 +34,6 @@ public class BookCopy {
 
     public void setStatus(CopyStatus status) {
         this.status = status;
-    }
-
-    @Override
-    public String toString() {
-        return "BookCopy{" +
-                "copyId=" + copyId +
-                ", bookId=" + bookId +
-                ", status=" + status +
-                '}';
     }
 }
 

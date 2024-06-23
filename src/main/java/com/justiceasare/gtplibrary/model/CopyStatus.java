@@ -1,4 +1,4 @@
-package com.justiceasare.gtplibrabry.model;
+package com.justiceasare.gtplibrary.model;
 
 public enum CopyStatus {
     AVAILABLE,

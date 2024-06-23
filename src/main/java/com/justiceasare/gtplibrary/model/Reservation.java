@@ -1,4 +1,4 @@
-package com.justiceasare.gtplibrabry.model;
+package com.justiceasare.gtplibrary.model;
 
 import java.sql.Timestamp;
 
@@ -46,16 +46,6 @@ public class Reservation {
 
     public void setReservationDate(Timestamp reservationDate) {
         this.reservationDate = reservationDate;
-    }
-
-    @Override
-    public String toString() {
-        return "Reservation{" +
-                "reservationId=" + reservationId +
-                ", patronId=" + patronId +
-                ", bookId=" + bookId +
-                ", reservationDate=" + reservationDate +
-                '}';
     }
 }
 

@@ -1,4 +1,4 @@
-package com.justiceasare.gtplibrabry.model;
+package com.justiceasare.gtplibrary.model;
 
 public class Staff extends User {
     private String staffId;
@@ -16,11 +16,5 @@ public class Staff extends User {
         this.staffId = staffId;
     }
 
-    @Override
-    public String toString() {
-        return "Staff{" +
-                "staffId='" + staffId + '\'' +
-                "} " + super.toString();
-    }
 }
 

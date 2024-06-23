@@ -1,7 +1,7 @@
-package com.justiceasare.gtplibrabry.dao;
+package com.justiceasare.gtplibrary.dao;
 
-import com.justiceasare.gtplibrabry.model.Reservation;
-import com.justiceasare.gtplibrabry.util.DatabaseSource;
+import com.justiceasare.gtplibrary.model.Reservation;
+import com.justiceasare.gtplibrary.util.DatabaseSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

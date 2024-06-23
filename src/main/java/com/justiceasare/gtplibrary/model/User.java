@@ -1,4 +1,4 @@
-package com.justiceasare.gtplibrabry.model;
+package com.justiceasare.gtplibrary.model;
 
 public class User {
     private int userId;
@@ -13,7 +13,6 @@ public class User {
         this.userType = userType;
     }
 
-    // Getters and Setters
     public int getUserId() {
         return userId;
     }
@@ -44,15 +43,5 @@ public class User {
 
     public void setUserType(UserType userType) {
         this.userType = userType;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", userType=" + userType +
-                '}';
     }
 }

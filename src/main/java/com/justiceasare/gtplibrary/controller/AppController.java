@@ -1,7 +1,7 @@
-package com.justiceasare.gtplibrabry.controller;
+package com.justiceasare.gtplibrary.controller;
 
-import com.justiceasare.gtplibrabry.dao.*;
-import com.justiceasare.gtplibrabry.model.*;
+import com.justiceasare.gtplibrary.dao.*;
+import com.justiceasare.gtplibrary.model.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -41,7 +41,6 @@ public class AppController {
     @FXML private TableColumn<FineUserDTO, Boolean> fineUserPaidColumn;
 
     @FXML private TableView<Reservation> reservationTableView;
-    @FXML private TableColumn<Reservation, Integer> reservationIdColumn;
     @FXML private TableColumn<Reservation, Integer> reservationPatronIdColumn;
     @FXML private TableColumn<Reservation, Integer> reservationBookIdColumn;
     @FXML private TableColumn<Reservation, Timestamp> reservationDateColumn;
@@ -102,7 +101,6 @@ public class AppController {
     }
 
     private void initializeReservationTableView() {
-        reservationIdColumn.setCellValueFactory(new PropertyValueFactory<>("reservationId"));
         reservationPatronIdColumn.setCellValueFactory(new PropertyValueFactory<>("patronId"));
         reservationBookIdColumn.setCellValueFactory(new PropertyValueFactory<>("bookId"));
         reservationDateColumn.setCellValueFactory(new PropertyValueFactory<>("reservationDate"));
@@ -123,16 +121,13 @@ public class AppController {
 
     @FXML
     private void addBook() {
-        // Create a custom dialog for adding a book
         Dialog<Book> dialog = new Dialog<>();
         dialog.setTitle("Add Book");
         dialog.setHeaderText("Enter Book Title and Category");
 
-        // Set the button types
         ButtonType addButtonType = new ButtonType("Add", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(addButtonType, ButtonType.CANCEL);
 
-        // Create Title and Category fields
         TextField titleField = new TextField();
         titleField.setPromptText("Title");
         TextField categoryField = new TextField();
@@ -147,7 +142,6 @@ public class AppController {
 
         dialog.getDialogPane().setContent(grid);
 
-        // Enable/Disable add button based on input validation
         Node addButton = dialog.getDialogPane().lookupButton(addButtonType);
         addButton.setDisable(true);
 
@@ -159,7 +153,6 @@ public class AppController {
             addButton.setDisable(newValue.trim().isEmpty() || titleField.getText().trim().isEmpty());
         });
 
-        // Convert the result to a book object when the add button is clicked
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == addButtonType) {
                 String title = titleField.getText().trim();
@@ -183,16 +176,13 @@ public class AppController {
     private void updateBook() {
         Book selectedBook = bookTableView.getSelectionModel().getSelectedItem();
         if (selectedBook != null) {
-            // Create a custom dialog for updating book details
             Dialog<Pair<String, String>> dialog = new Dialog<>();
             dialog.setTitle("Update Book");
             dialog.setHeaderText("Update Book Title and Category");
 
-            // Set the button types
             ButtonType updateButtonType = new ButtonType("Update", ButtonBar.ButtonData.OK_DONE);
             dialog.getDialogPane().getButtonTypes().addAll(updateButtonType, ButtonType.CANCEL);
 
-            // Create the Title and Category text fields
             TextField titleField = new TextField();
             titleField.setText(selectedBook.getTitle());
             TextField categoryField = new TextField();
@@ -206,7 +196,6 @@ public class AppController {
             grid.add(categoryField, 1, 1);
             dialog.getDialogPane().setContent(grid);
 
-            // Convert the result to a pair of title and category when the update button is clicked
             dialog.setResultConverter(dialogButton -> {
                 if (dialogButton == updateButtonType) {
                     return new Pair<>(titleField.getText(), categoryField.getText());
@@ -226,20 +215,6 @@ public class AppController {
                     showErrorAlert("Failed to update book");
                 }
             });
-        } else {
-            showErrorAlert("No book selected");
-        }
-    }
-
-    @FXML
-    private void deleteBook() {
-        Book selectedBook = bookTableView.getSelectionModel().getSelectedItem();
-        if (selectedBook != null) {
-            if (bookDAO.deleteBook(selectedBook.getBookId())) {
-                bookTableView.getItems().remove(selectedBook);
-            } else {
-                showErrorAlert("Failed to delete book");
-            }
         } else {
             showErrorAlert("No book selected");
         }
@@ -406,25 +381,20 @@ public class AppController {
 
     @FXML
     private void addFine() {
-        // Create a custom dialog
         Dialog<Boolean> dialog = new Dialog<>();
         dialog.setTitle("Add Fine");
         dialog.setHeaderText("Select Patron and Enter Fine Amount");
 
-        // Set the button types
         ButtonType addButtonType = new ButtonType("Add", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(addButtonType, ButtonType.CANCEL);
 
-        // Create Amount field and Patron ComboBox
         TextField amountField = new TextField();
         amountField.setPromptText("Amount");
 
-        // Fetch Patrons from DAO
         ObservableList<String> patronList = FXCollections.observableArrayList(FineDAO.getAllPatronNames());
         ComboBox<String> patronComboBox = new ComboBox<>(patronList);
         patronComboBox.setPromptText("Select Patron");
 
-        // Display User Name
         Label userNameLabel = new Label();
 
         GridPane grid = createConfiguredGridPane();
@@ -436,11 +406,9 @@ public class AppController {
         grid.add(amountField, 1, 2);
         dialog.getDialogPane().setContent(grid);
 
-        // Enable/Disable button based on input validation
         Node addButton = dialog.getDialogPane().lookupButton(addButtonType);
         addButton.setDisable(true);
 
-        // Fetch and Display UserName based on selected Patron
         patronComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 int userId = FineDAO.getUserId(newValue); // Fetch user ID from DAO
@@ -467,21 +435,18 @@ public class AppController {
             addButton.setDisable(newValue.trim().isEmpty() || !newValue.matches("\\d+(\\.\\d+)?"));
         });
 
-        // Convert Amount input to double when adding fine
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == addButtonType) {
                 try {
                     String selectedPatron = patronComboBox.getValue();
                     double amount = Double.parseDouble(amountField.getText().trim());
 
-                    Timestamp fineDate = new Timestamp(System.currentTimeMillis());
-
                     int userId = FineDAO.getUserId(selectedPatron);
 
-                    Fine newFine = new Fine(1, userId, amount, false); // Initially not paid
-                    if (FineDAO.addFine(newFine)) { // Call DAO method to add fine
-                        fineUserTableView.refresh();
-                        return true;
+                    Fine newFine = new Fine(1, userId, amount, false);
+                    if (FineDAO.addFine(newFine)) {
+//                        fineUserTableView.refresh();
+                        fineUserTableView.getItems().getClass();
                     } else {
                         showErrorAlert("Failed to add fine");
                     }
@@ -489,7 +454,7 @@ public class AppController {
                     showErrorAlert("Invalid input format. Amount must be a number.");
                 }
             }
-            return false;
+            return null;
         });
         dialog.showAndWait();
     }
@@ -540,7 +505,6 @@ public class AppController {
                         selectedFine.setPaid(paid);
                         if (fineDAO.updateFine(selectedFine)) {
                             fineUserTableView.refresh();
-                            return true;
                         } else {
                             showErrorAlert("Failed to update fine");
                         }
@@ -685,7 +649,6 @@ public class AppController {
         // Implement DAO method to check if patronId exists in patron table
         return reservationDAO.existsPatron(patronId);
     }
-
 
     private void showErrorAlert(String message) {
         Alert alert = new Alert(AlertType.ERROR);

@@ -1,4 +1,4 @@
-package com.justiceasare.gtplibrabry.app;
+package com.justiceasare.gtplibrary.app;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

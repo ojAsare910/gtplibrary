@@ -1,8 +1,8 @@
-package com.justiceasare.gtplibrabry.dao;
+package com.justiceasare.gtplibrary.dao;
 
-import com.justiceasare.gtplibrabry.model.Fine;
-import com.justiceasare.gtplibrabry.model.FineUserDTO;
-import com.justiceasare.gtplibrabry.util.DatabaseSource;
+import com.justiceasare.gtplibrary.model.Fine;
+import com.justiceasare.gtplibrary.model.FineUserDTO;
+import com.justiceasare.gtplibrary.util.DatabaseSource;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -59,22 +59,6 @@ public class FineDAO {
         return patronNames;
     }
 
-    public List<Fine> getAllFines() {
-        String query = "SELECT * FROM Fine";
-        List<Fine> fines = new ArrayList<>();
-        try (Connection connection = DatabaseSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                fines.add(new Fine(resultSet.getInt("fine_id"), resultSet.getInt("transaction_id"),
-                        resultSet.getDouble("amount"), resultSet.getBoolean("paid")));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return fines;
-    }
-
     public List<FineUserDTO> getAllFineWithUsername() {
         String query = "select f.fine_id, t.transaction_id, u.username, b.title, f.amount, f.paid from fine f\n" +
                 "    left join transaction t ON t.transaction_id = f.transaction_id\n" +
@@ -129,15 +113,4 @@ public class FineDAO {
         }
     }
 
-    public boolean deleteFine(int fineId) {
-        String query = "DELETE FROM Fine WHERE fine_id = ?";
-        try (Connection connection = DatabaseSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, fineId);
-            return statement.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
 }

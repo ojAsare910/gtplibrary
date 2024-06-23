@@ -1,4 +1,4 @@
-package com.justiceasare.gtplibrabry.model;
+package com.justiceasare.gtplibrary.model;
 
 public class Patron extends User {
     private String patronId;
@@ -14,12 +14,5 @@ public class Patron extends User {
 
     public void setPatronId(String patronId) {
         this.patronId = patronId;
-    }
-
-    @Override
-    public String toString() {
-        return "Patron{" +
-                "patronId='" + patronId + '\'' +
-                "} " + super.toString();
     }
 }

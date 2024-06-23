@@ -1,4 +1,4 @@
-package com.justiceasare.gtplibrabry.util;
+package com.justiceasare.gtplibrary.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

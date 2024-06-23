@@ -1,8 +1,8 @@
-package com.justiceasare.gtplibrabry.dao;
+package com.justiceasare.gtplibrary.dao;
 
-import com.justiceasare.gtplibrabry.model.User;
-import com.justiceasare.gtplibrabry.model.UserType;
-import com.justiceasare.gtplibrabry.util.DatabaseSource;
+import com.justiceasare.gtplibrary.model.User;
+import com.justiceasare.gtplibrary.model.UserType;
+import com.justiceasare.gtplibrary.util.DatabaseSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
