@@ -1,6 +1,6 @@
 Library Management System Documentation
 1. Introduction
-This project provides functionalities for adding, updating, and deleting books, managing users, handling transactions, fines, reservations, and more. It includes a user-friendly graphical interface built using JavaFX for the frontend and MySQL for the backend database.
+This project provides functionalities for adding, updating, and deleting books, managing users, handling transactionHistories, fines, reservations, and more. It includes a user-friendly graphical interface built using JavaFX for the frontend and MySQL for the backend database.
 2. Features
 Books Management:
 Add new books with details like title and category

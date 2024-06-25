@@ -1,22 +1,33 @@
 package com.justiceasare.gtplibrary.dao;
 
 import com.justiceasare.gtplibrary.model.Reservation;
+import com.justiceasare.gtplibrary.model.ReservationType;
 import com.justiceasare.gtplibrary.util.DatabaseSource;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReservationDAO {
 
     public List<Reservation> getAllReservations() {
-        String query = "SELECT * FROM Reservation";
         List<Reservation> reservations = new ArrayList<>();
-        try (Connection connection = DatabaseSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                reservations.add(new Reservation(resultSet.getInt("reservation_id"), resultSet.getInt("patron_id"),
-                        resultSet.getInt("book_id"), resultSet.getTimestamp("reservation_date")));
+        String query = "SELECT * FROM reservation";
+
+        try (Connection conn = DatabaseSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                int reservationId = rs.getInt("reservation_id");
+                int bookId = rs.getInt("book_id");
+                int userId = rs.getInt("user_id");
+                ReservationType reservationType = ReservationType.valueOf(rs.getString("reservation_type"));
+                LocalDate reservationDate = rs.getDate("reservation_date").toLocalDate();
+                boolean completed = rs.getBoolean("is_completed");
+
+                Reservation reservation = new Reservation(reservationId, bookId, userId, reservationType, reservationDate, completed);
+                reservations.add(reservation);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -24,29 +35,37 @@ public class ReservationDAO {
         return reservations;
     }
 
-    public Reservation getReservationById(int reservationId) {
-        String query = "SELECT * FROM Reservation WHERE reservation_id = ?";
-        try (Connection connection = DatabaseSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, reservationId);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                return new Reservation(resultSet.getInt("reservation_id"), resultSet.getInt("patron_id"),
-                        resultSet.getInt("book_id"), resultSet.getTimestamp("reservation_date"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+    public static boolean addReservation(Reservation reservation) {
+        String addReservationQuery = "INSERT INTO Reservation (book_id, user_id, reservation_type, reservation_date, is_completed) VALUES (?, ?, ?, ?, ?)";
+        String addTransactionQuery = "INSERT INTO TransactionHistory (book_id, user_id, reservation_type, transaction_date) VALUES (?, ?, ?, ?)";
 
-    public boolean addReservation(Reservation reservation) {
-        String query = "INSERT INTO Reservation (patron_id, book_id) VALUES (?, ?)";
         try (Connection connection = DatabaseSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, reservation.getPatronId());
-            statement.setInt(2, reservation.getBookId());
-            return statement.executeUpdate() > 0;
+             PreparedStatement addReservationStmt = connection.prepareStatement(addReservationQuery, PreparedStatement.RETURN_GENERATED_KEYS);
+             PreparedStatement addTransactionStmt = connection.prepareStatement(addTransactionQuery)) {
+
+            addReservationStmt.setInt(1, reservation.getBookId());
+            addReservationStmt.setInt(2, reservation.getUserId());
+            addReservationStmt.setString(3, reservation.getReservationType().name());
+            addReservationStmt.setDate(4, Date.valueOf(reservation.getReservationDate())); // Convert LocalDate to SQL Date
+            addReservationStmt.setBoolean(5, reservation.isCompleted());
+            int rowsInserted = addReservationStmt.executeUpdate();
+
+            if (rowsInserted > 0) {
+                ResultSet generatedKeys = addReservationStmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    int reservationId = generatedKeys.getInt(1);
+                    reservation.setReservationId(reservationId);
+
+                    // Insert transaction history
+                    addTransactionStmt.setInt(1, reservation.getBookId());
+                    addTransactionStmt.setInt(2, reservation.getUserId());
+                    addTransactionStmt.setString(3, reservation.getReservationType().name());
+                    addTransactionStmt.setDate(4, Date.valueOf(reservation.getReservationDate())); // Convert LocalDate to SQL Date
+                    addTransactionStmt.executeUpdate();
+
+                    return true;
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -54,14 +73,30 @@ public class ReservationDAO {
     }
 
     public boolean updateReservation(Reservation reservation) {
-        String query = "UPDATE Reservation SET patron_id = ?, book_id = ?, reservation_date = ? WHERE reservation_id = ?";
+        String updateReservationQuery = "UPDATE Reservation SET book_id = ?, user_id = ?, reservation_type = ?, reservation_date = ?, is_completed = ? WHERE reservation_id = ?";
+        String addTransactionQuery = "INSERT INTO TransactionHistory (book_id, user_id, reservation_type, transaction_date) VALUES (?, ?, ?, ?)";
+
         try (Connection connection = DatabaseSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, reservation.getPatronId());
-            statement.setInt(2, reservation.getBookId());
-            statement.setTimestamp(3, reservation.getReservationDate());
-            statement.setInt(4, reservation.getReservationId());
-            return statement.executeUpdate() > 0;
+             PreparedStatement updateReservationStmt = connection.prepareStatement(updateReservationQuery);
+             PreparedStatement addTransactionStmt = connection.prepareStatement(addTransactionQuery)) {
+
+            updateReservationStmt.setInt(1, reservation.getBookId());
+            updateReservationStmt.setInt(2, reservation.getUserId());
+            updateReservationStmt.setString(3, reservation.getReservationType().name());
+            updateReservationStmt.setDate(4, Date.valueOf(reservation.getReservationDate()));
+            updateReservationStmt.setBoolean(5, reservation.isCompleted());
+            updateReservationStmt.setInt(6, reservation.getReservationId());
+            int rowsUpdated = updateReservationStmt.executeUpdate();
+
+            if (rowsUpdated > 0) {
+                addTransactionStmt.setInt(1, reservation.getBookId());
+                addTransactionStmt.setInt(2, reservation.getUserId());
+                addTransactionStmt.setString(3, reservation.getReservationType().name());
+                addTransactionStmt.setDate(4, Date.valueOf(reservation.getReservationDate()));
+                addTransactionStmt.executeUpdate();
+
+                return true;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

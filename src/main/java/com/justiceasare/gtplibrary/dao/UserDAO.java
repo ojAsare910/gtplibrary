@@ -25,19 +25,31 @@ public class UserDAO {
         return users;
     }
 
-    public boolean addUser(User user) {
+    public int addUser(User user) {
         String query = "INSERT INTO User (username, email, user_type) VALUES (?, ?, ?)";
         try (Connection connection = DatabaseSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+             PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, user.getUsername());
             statement.setString(2, user.getEmail());
             statement.setString(3, user.getUserType().name());
-            return statement.executeUpdate() > 0;
+
+            int affectedRows = statement.executeUpdate();
+            if (affectedRows == 0) {
+                return -1; // Insert failed
+            }
+
+            ResultSet generatedKeys = statement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                return generatedKeys.getInt(1); // Return the generated userId
+            } else {
+                return -1; // Insert failed
+            }
         } catch (SQLException e) {
             e.printStackTrace();
+            return -1; // Insert failed
         }
-        return false;
     }
+
 
     public boolean updateUser(User user) {
         String query = "UPDATE User SET username = ?, email = ?, user_type = ? WHERE user_id = ?";

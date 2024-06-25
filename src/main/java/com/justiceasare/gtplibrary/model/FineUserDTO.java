@@ -7,14 +7,16 @@ public class FineUserDTO {
     private String title;
     private double amount;
     private boolean paid;
+    private int userId;
 
-    public FineUserDTO(int fineId, int transactionId, String username, String title, double amount, boolean paid) {
+    public FineUserDTO(int fineId, int transactionId, String username, String title, double amount, boolean paid, int userId) {
         this.fineId = fineId;
         this.transactionId = transactionId;
         this.username = username;
         this.title = title;
         this.amount = amount;
         this.paid = paid;
+        this.userId = userId;
     }
 
     public int getFineId() {
@@ -63,5 +65,13 @@ public class FineUserDTO {
 
     public void setPaid(boolean paid) {
         this.paid = paid;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 }

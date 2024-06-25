@@ -59,22 +59,26 @@ public class FineDAO {
         return patronNames;
     }
 
-    public List<FineUserDTO> getAllFineWithUsername() {
-        String query = "select f.fine_id, t.transaction_id, u.username, b.title, f.amount, f.paid from fine f\n" +
-                "    left join transaction t ON t.transaction_id = f.transaction_id\n" +
-                "    left join user u ON t.user_id = u.user_id\n" +
-                "    left join bookcopy bc ON t.copy_id = bc.copy_id\n" +
-                "    left join book b ON bc.book_id = b.book_id;";
+    public static List<FineUserDTO> getAllFineWithUsername() {
+        String query = "select f.fine_id, t.transaction_id, u.username, b.title, f.amount, f.paid, u.user_id from fine f\n" +
+                "                  left join transactionhistory t ON t.transaction_id = f.transaction_id\n" +
+                "                   left join user u ON t.user_id = u.user_id\n" +
+                "                   left join bookcopy bc ON t.book_id = bc.copy_id\n" +
+                "                 left join book b ON bc.book_id = b.book_id;";
         List<FineUserDTO> finesByUsername = new ArrayList<>();
         try (Connection connection = DatabaseSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                finesByUsername.add(new FineUserDTO(
-                        resultSet.getInt("fine_id"), resultSet.getInt("transaction_id"),
-                        resultSet.getString("username"),
-                        resultSet.getString("title"),
-                        resultSet.getDouble("amount"), resultSet.getBoolean("paid")));
+                int fineId = resultSet.getInt("fine_id");
+                int transactionId = resultSet.getInt("transaction_id");
+                String username = resultSet.getString("username");
+                String title = resultSet.getString("title");
+                double amount = resultSet.getDouble("amount");
+                boolean paid = resultSet.getBoolean("paid");
+                int userId = resultSet.getInt("user_id");
+                FineUserDTO fineUserDTO = new FineUserDTO(fineId, transactionId, username, title, amount, paid, userId);
+                finesByUsername.add(fineUserDTO);
             }
         } catch (SQLException e) {
             e.printStackTrace();

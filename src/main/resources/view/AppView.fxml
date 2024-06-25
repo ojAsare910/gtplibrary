@@ -12,7 +12,11 @@
                     <TableView fx:id="bookTableView" AnchorPane.topAnchor="20.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
                         <columns>
                             <TableColumn fx:id="bookTitleColumn" prefWidth="200.0" text="Title" />
+                            <TableColumn fx:id="bookAuthorColumn" prefWidth="200.0" text="Author" />
+                            <TableColumn fx:id="bookIsbnColumn" prefWidth="200.0" text="ISBN" />
                             <TableColumn fx:id="bookCategoryColumn" prefWidth="200.0" text="Category" />
+                            <TableColumn fx:id="statusColumn" prefWidth="200.0" text="Status" />
+
                         </columns>
                     </TableView>
                     <HBox spacing="10" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="28.0">
@@ -65,9 +69,11 @@
                 <AnchorPane>
                     <TableView fx:id="reservationTableView" AnchorPane.topAnchor="20.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
                         <columns>
-                            <TableColumn fx:id="reservationPatronIdColumn" prefWidth="100.0" text="Patron ID" />
-                            <TableColumn fx:id="reservationBookIdColumn" prefWidth="100.0" text="Book ID" />
-                            <TableColumn fx:id="reservationDateColumn" prefWidth="200.0" text="Reservation Date" />
+                            <TableColumn fx:id="reservationBookIdColumn" prefWidth="100.0" text="Book ID"/>
+                            <TableColumn fx:id="reservationUserIdColumn" prefWidth="100.0" text="User ID"/>
+                            <TableColumn fx:id="reservationTypeColumn" prefWidth="150.0" text="Reservation Type"/>
+                            <TableColumn fx:id="reservationDateColumn" prefWidth="200.0" text="Reservation Date"/>
+                            <TableColumn fx:id="reservationIsCompletedColumn" prefWidth="100.0"   text="Completed"/>
                         </columns>
                     </TableView>
                     <HBox spacing="10" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="28.0">
@@ -83,9 +89,8 @@
                 <AnchorPane>
                     <TableView fx:id="transactionTableView" AnchorPane.topAnchor="20.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
                         <columns>
-                            <TableColumn fx:id="transactionIdColumn" prefWidth="100.0" text="Transaction ID" />
+                            <TableColumn fx:id="transactionBookIdColumn" prefWidth="100.0" text="User ID" />
                             <TableColumn fx:id="transactionUserIdColumn" prefWidth="100.0" text="User ID" />
-                            <TableColumn fx:id="copyIdColumn" prefWidth="100.0" text="Book ID" />
                             <TableColumn fx:id="transactionTypeColumn" prefWidth="100.0" text="Transaction Type" />
                             <TableColumn fx:id="transactionDateColumn" prefWidth="200.0" text="Transaction Date" />
                         </columns>

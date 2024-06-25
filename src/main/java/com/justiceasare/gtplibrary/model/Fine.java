@@ -3,12 +3,16 @@ package com.justiceasare.gtplibrary.model;
 public class Fine {
     private int fineId;
     private int transactionId;
+    private String username;
+    private String title;
     private double amount;
     private boolean paid;
 
     public Fine(int fineId, int transactionId, double amount, boolean paid) {
         this.fineId = fineId;
         this.transactionId = transactionId;
+        this.username = username;
+        this.title = title;
         this.amount = amount;
         this.paid = paid;
     }
@@ -45,5 +49,20 @@ public class Fine {
     public void setPaid(boolean paid) {
         this.paid = paid;
     }
-}
 
+    public String getName() {
+        return username;
+    }
+
+    public void setName(String name) {
+        this.username = name;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+}
