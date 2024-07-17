@@ -1,8 +1,6 @@
 package com.justiceasare.gtplibrary.dao;
 
 import com.justiceasare.gtplibrary.model.Book;
-import com.justiceasare.gtplibrary.model.BookCopy;
-import com.justiceasare.gtplibrary.model.CopyStatus;
 import com.justiceasare.gtplibrary.util.DatabaseSource;
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,8 +11,8 @@ import java.util.Map;
 public class BookDAO {
 
     public static List<Book> getAllBooks() {
-        String query = "SELECT b.book_id, b.title, b.author, b.isbn, b.category, " +
-                "bc.copy_id, bc.status FROM Book b LEFT JOIN BookCopy bc ON b.book_id = bc.book_id";
+        String query = "SELECT b.book_id, b.title, b.author, b.isbn, b.category" +
+                " FROM Book b WHERE is_archived = 0";
         List<Book> books = new ArrayList<>();
 
         try (Connection connection = DatabaseSource.getConnection();
@@ -32,15 +30,8 @@ public class BookDAO {
                     String author = resultSet.getString("author");
                     String isbn = resultSet.getString("isbn");
                     String category = resultSet.getString("category");
-                    book = new Book(bookId, title, author, isbn, category);
+                    book = new Book(bookId, title, author, isbn, category, false);
                     bookMap.put(bookId, book);
-                }
-
-                int copyId = resultSet.getInt("copy_id");
-                if (copyId > 0) {
-                    String status = resultSet.getString("status");
-                    BookCopy copy = new BookCopy(copyId, bookId, CopyStatus.valueOf(status));
-                    book.getCopies().add(copy);
                 }
             }
 
@@ -52,43 +43,70 @@ public class BookDAO {
         return books;
     }
 
-    public int addBook(Book book) {
-    String insertBookSQL = "INSERT INTO Book (title, author, isbn, category) VALUES (?, ?, ?, ?)";
-    String insertCopySQL = "INSERT INTO BookCopy (book_id, status) VALUES (?, ?)";
-    int bookId = -1;
-    try (Connection connection = DatabaseSource.getConnection();
-         PreparedStatement bookStatement = connection.prepareStatement(insertBookSQL, PreparedStatement.RETURN_GENERATED_KEYS)) {
+    // Check if a book with the given title and ISBN exists
+    public static boolean bookExists(String title, String isbn) {
+        String query = "SELECT COUNT(*) FROM Book WHERE title = ? AND isbn = ?";
+        try (Connection connection = DatabaseSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, title);
+            statement.setString(2, isbn);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                int count = resultSet.getInt(1);
+                return count > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
-        // Insert the book into the Book table
-        bookStatement.setString(1, book.getTitle());
-        bookStatement.setString(2, book.getAuthor());
-        bookStatement.setString(3, book.getIsbn());
-        bookStatement.setString(4, book.getCategory());
-        int rowsInserted = bookStatement.executeUpdate();
+    // Add a new book with validation to check if the book already exists
+    public static int addBook(Book book) {
+        String insertBookSQL = "INSERT INTO Book (title, author, isbn, category, is_archived) VALUES (?, ?, ?, ?, ?)";
+        int bookId = -1;
 
-        if (rowsInserted > 0) {
-            // Retrieve the generated book ID
-            try (ResultSet generatedKeys = bookStatement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    bookId = generatedKeys.getInt(1);
+        // Check if the book already exists
+        if (bookExists(book.getTitle(), book.getIsbn())) {
+            System.out.println("Book already exists.");
+            return bookId; // Return -1 indicating failure to add
+        }
 
-                    // Insert the book copy into the BookCopies table
-                    try (PreparedStatement copyStatement = connection.prepareStatement(insertCopySQL)) {
-                        copyStatement.setInt(1, bookId);
-                        copyStatement.setString(2, CopyStatus.AVAILABLE.name());
-                        copyStatement.executeUpdate();
+        try (Connection connection = DatabaseSource.getConnection();
+             PreparedStatement bookStatement = connection.prepareStatement(insertBookSQL, PreparedStatement.RETURN_GENERATED_KEYS)) {
+
+            // Insert the book into the Book table
+            bookStatement.setString(1, book.getTitle());
+            bookStatement.setString(2, book.getAuthor());
+            bookStatement.setString(3, book.getIsbn());
+            bookStatement.setString(4, book.getCategory());
+            bookStatement.setBoolean(5, book.getIs_archived());
+            int rowsInserted = bookStatement.executeUpdate();
+
+            if (rowsInserted > 0) {
+                // Retrieve the generated book ID
+                try (ResultSet generatedKeys = bookStatement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        bookId = generatedKeys.getInt(1);
                     }
                 }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return bookId;
     }
-    return bookId;
-}
 
+    // Update a book with validation to check if the book exists
     public static boolean updateBook(Book book) {
         String query = "UPDATE Book SET title = ?, author = ?, isbn = ?, category = ? WHERE book_id = ?";
+
+        // Check if the book exists before updating
+        if (!bookExistsById(book.getBookId())) {
+            System.out.println("Book does not exist.");
+            return false;
+        }
+
         try (Connection connection = DatabaseSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, book.getTitle());
@@ -97,6 +115,44 @@ public class BookDAO {
             statement.setString(4, book.getCategory());
             statement.setInt(5, book.getBookId());
             return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Delete a book with validation to check if the book exists
+    public static boolean deleteBook(int bookId) {
+        String query = "UPDATE Book SET is_archived = ? WHERE book_id = ?";
+
+        // Check if the book exists before deleting
+        if (!bookExistsById(bookId)) {
+            System.out.println("Book does not exist.");
+            return false;
+        }
+
+        try (Connection connection = DatabaseSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setBoolean(1, true);  // Set is_archived to true
+            statement.setInt(2, bookId);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Check if a book exists by book ID
+    private static boolean bookExistsById(int bookId) {
+        String query = "SELECT COUNT(*) FROM Book WHERE book_id = ?";
+        try (Connection connection = DatabaseSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, bookId);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                int count = resultSet.getInt(1);
+                return count > 0;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -12,7 +12,12 @@ public class TransactionDAO {
 
     public List<TransactionHistory> getAllTransactions() {
         List<TransactionHistory> transactions = new ArrayList<>();
-        String query = "SELECT * FROM transactionhistory";
+        String query = "SELECT th.transaction_id, th.book_id, th.user_id, th.reservation_type, th.transaction_date,\n" +
+                "       b.title AS book_title, u.username AS username\n" +
+                "FROM transactionhistory th\n" +
+                "         JOIN book b ON th.book_id = b.book_id\n" +
+                "         JOIN user u ON th.user_id = u.user_id\n" +
+                "ORDER BY th.transaction_id;";
 
         try (Connection conn = DatabaseSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query);
@@ -24,8 +29,10 @@ public class TransactionDAO {
                 int userId = rs.getInt("user_id");
                 ReservationType reservationType = ReservationType.valueOf(rs.getString("reservation_type"));
                 LocalDate transactionDate = rs.getDate("transaction_date").toLocalDate();
+                String bookTitle = rs.getString("book_title");
+                String username = rs.getString("username");
 
-                TransactionHistory transaction = new TransactionHistory(transactionId, bookId, userId, reservationType, transactionDate);
+                TransactionHistory transaction = new TransactionHistory(transactionId, bookTitle, username, reservationType, transactionDate);
                 transactions.add(transaction);
             }
 
@@ -34,25 +41,5 @@ public class TransactionDAO {
         }
 
         return transactions;
-    }
-
-    public boolean addTransaction(TransactionHistory transaction) {
-        String sql = "INSERT INTO TransactionHistory (book_id, user_id, reservation_type, transaction_date) VALUES (?, ?, ?, ?)";
-
-        try (Connection conn = DatabaseSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, transaction.getBookId());
-            stmt.setInt(2, transaction.getUserId());
-            stmt.setString(3, transaction.getReservationType().name());
-            stmt.setDate(4, java.sql.Date.valueOf(transaction.getTransactionDate()));
-
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected == 1;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
     }
 }

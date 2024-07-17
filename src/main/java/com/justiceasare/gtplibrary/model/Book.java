@@ -1,31 +1,21 @@
 package com.justiceasare.gtplibrary.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Book {
     private int bookId;
     private String author;
     private String isbn;
     private String title;
     private String category;
-    private List<BookCopy> copies;
+    private Boolean is_archived;
 
-    public List<BookCopy> getCopies() {
-        return copies;
-    }
 
-    public void setCopies(List<BookCopy> copies) {
-        this.copies = copies;
-    }
-
-    public Book(int bookId, String title, String author, String isbn, String category) {
+    public Book(int bookId, String title, String author, String isbn, String category, Boolean is_archived) {
         this.bookId = bookId;
         this.title = title;
         this.author = author;
         this.isbn = isbn;
         this.category = category;
-        this.copies = new ArrayList<BookCopy>();
+        this.is_archived = is_archived;
     }
 
     public String getAuthor() {
@@ -44,7 +34,6 @@ public class Book {
         this.isbn = isbn;
     }
 
-    // Getters and Setters
     public int getBookId() {
         return bookId;
     }
@@ -67,6 +56,14 @@ public class Book {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public Boolean getIs_archived() {
+        return is_archived;
+    }
+
+    public void setIs_archived(Boolean is_archived) {
+        this.is_archived = is_archived;
     }
 }
 

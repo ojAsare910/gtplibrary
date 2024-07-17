@@ -4,9 +4,8 @@
 <?import javafx.scene.layout.*?>
 
 <TabPane fx:id="tabPane" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.justiceasare.gtplibrary.controller.AppController">
-
     <tabs>
-        <Tab fx:id="bookTab" text="Books" closable="false">
+        <Tab fx:id="bookTab" text="Books" closable="false" onSelectionChanged="#handleBookTabSelected">
             <content>
                 <AnchorPane>
                     <TableView fx:id="bookTableView" AnchorPane.topAnchor="20.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
@@ -15,24 +14,23 @@
                             <TableColumn fx:id="bookAuthorColumn" prefWidth="200.0" text="Author" />
                             <TableColumn fx:id="bookIsbnColumn" prefWidth="200.0" text="ISBN" />
                             <TableColumn fx:id="bookCategoryColumn" prefWidth="200.0" text="Category" />
-                            <TableColumn fx:id="statusColumn" prefWidth="200.0" text="Status" />
-
                         </columns>
                     </TableView>
                     <HBox spacing="10" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="28.0">
                         <Button onAction="#addBook" text="Add Book" />
                         <Button onAction="#updateBook" text="Update Book" />
+                        <Button onAction="#deleteBook" text="Delete Book" />
                     </HBox>
                 </AnchorPane>
             </content>
         </Tab>
 
-        <Tab fx:id="userTab" text="Users" closable="false">
+        <Tab fx:id="userTab" text="Users" closable="false" onSelectionChanged="#handleUserTabSelected">
             <content>
                 <AnchorPane>
                     <TableView fx:id="userTableView" AnchorPane.topAnchor="20.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
                         <columns>
-                            <TableColumn fx:id="usernameColumn" prefWidth="150.0" text="Username" />
+                            <TableColumn fx:id="usernameColumn" prefWidth="150.0" text="Name" />
                             <TableColumn fx:id="emailColumn" prefWidth="200.0" text="Email" />
                             <TableColumn fx:id="userTypeColumn" prefWidth="150.0" text="User Type" />
                         </columns>
@@ -45,35 +43,15 @@
             </content>
         </Tab>
 
-        <Tab fx:id="fineTab" text="Fines" closable="false">
-            <content>
-                <AnchorPane>
-                    <TableView fx:id="fineUserTableView" AnchorPane.topAnchor="20.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
-                        <columns>
-                            <TableColumn fx:id="fineUserNameColumn" prefWidth="100.0" text="Name" />
-                            <TableColumn fx:id="fineBookTitleColumn" prefWidth="100.0" text="Title" />
-                            <TableColumn fx:id="fineUserAmountColumn" prefWidth="100.0" text="Amount" />
-                            <TableColumn fx:id="fineUserPaidColumn" prefWidth="200.0" text="Paid" />
-                        </columns>
-                    </TableView>
-                    <HBox spacing="10" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="28.0">
-                        <Button onAction="#addFine" text="Add Fine" />
-                        <Button onAction="#updateFine" text="Update Fine" />
-                    </HBox>
-                </AnchorPane>
-            </content>
-        </Tab>
-
-        <Tab fx:id="reservationTab" text="Reservations" closable="false">
+        <Tab fx:id="reservationTab" text="Reservations" closable="false" onSelectionChanged="#handleReservationTabSelected">
             <content>
                 <AnchorPane>
                     <TableView fx:id="reservationTableView" AnchorPane.topAnchor="20.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
                         <columns>
-                            <TableColumn fx:id="reservationBookIdColumn" prefWidth="100.0" text="Book ID"/>
-                            <TableColumn fx:id="reservationUserIdColumn" prefWidth="100.0" text="User ID"/>
+                            <TableColumn fx:id="reservationBookTitleColumn" prefWidth="100.0" text="Book Title"/>
+                            <TableColumn fx:id="reservationUsernameColumn" prefWidth="100.0" text="Name"/>
                             <TableColumn fx:id="reservationTypeColumn" prefWidth="150.0" text="Reservation Type"/>
                             <TableColumn fx:id="reservationDateColumn" prefWidth="200.0" text="Reservation Date"/>
-                            <TableColumn fx:id="reservationIsCompletedColumn" prefWidth="100.0"   text="Completed"/>
                         </columns>
                     </TableView>
                     <HBox spacing="10" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="28.0">
@@ -84,13 +62,13 @@
             </content>
         </Tab>
 
-        <Tab fx:id="transactionTab" text="Transactions" closable="false">
+        <Tab fx:id="transactionTab" text="Transactions" closable="false" onSelectionChanged="#handleTransactionTabSelected">
             <content>
                 <AnchorPane>
                     <TableView fx:id="transactionTableView" AnchorPane.topAnchor="20.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
                         <columns>
-                            <TableColumn fx:id="transactionBookIdColumn" prefWidth="100.0" text="User ID" />
-                            <TableColumn fx:id="transactionUserIdColumn" prefWidth="100.0" text="User ID" />
+                            <TableColumn fx:id="transactionBookTitleColumn" prefWidth="100.0" text="Book Title" />
+                            <TableColumn fx:id="transactionUsernameColumn" prefWidth="100.0" text="Name" />
                             <TableColumn fx:id="transactionTypeColumn" prefWidth="100.0" text="Transaction Type" />
                             <TableColumn fx:id="transactionDateColumn" prefWidth="200.0" text="Transaction Date" />
                         </columns>
