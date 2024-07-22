@@ -10,6 +10,21 @@ import java.util.Map;
 
 public class BookDAO {
 
+    private Connection connection;
+
+    public BookDAO() {}
+
+    public BookDAO(Connection connection) {
+        this.connection = connection;
+    }
+
+    protected Connection getConnection() throws SQLException {
+        if (connection != null) {
+            return connection;
+        }
+        return DatabaseSource.getConnection();
+    }
+
     public static List<Book> getAllBooks() {
         String query = "SELECT b.book_id, b.title, b.author, b.isbn, b.category" +
                 " FROM Book b WHERE is_archived = 0";
@@ -62,13 +77,17 @@ public class BookDAO {
     }
 
     // Add a new book with validation to check if the book already exists
-    public static int addBook(Book book) {
+    public static int addBook(Book book) throws IllegalArgumentException {
         String insertBookSQL = "INSERT INTO Book (title, author, isbn, category, is_archived) VALUES (?, ?, ?, ?, ?)";
+
+        if (book == null) {
+            throw new IllegalArgumentException("Book cannot be null");
+        }
+
         int bookId = -1;
 
         // Check if the book already exists
         if (bookExists(book.getTitle(), book.getIsbn())) {
-            System.out.println("Book already exists.");
             return bookId; // Return -1 indicating failure to add
         }
 
@@ -123,11 +142,10 @@ public class BookDAO {
 
     // Delete a book with validation to check if the book exists
     public static boolean deleteBook(int bookId) {
-        String query = "UPDATE Book SET is_archived = ? WHERE book_id = ?";
+        String query = "UPDATE Book SET is_archived = ? WHERE book_id = ? AND is_archived = ?";
 
         // Check if the book exists before deleting
         if (!bookExistsById(bookId)) {
-            System.out.println("Book does not exist.");
             return false;
         }
 
@@ -135,6 +153,7 @@ public class BookDAO {
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setBoolean(1, true);  // Set is_archived to true
             statement.setInt(2, bookId);
+            statement.setBoolean(3, false); // Only update if it's not already archived
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -143,7 +162,7 @@ public class BookDAO {
     }
 
     // Check if a book exists by book ID
-    private static boolean bookExistsById(int bookId) {
+    public static boolean bookExistsById(int bookId) {
         String query = "SELECT COUNT(*) FROM Book WHERE book_id = ?";
         try (Connection connection = DatabaseSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {

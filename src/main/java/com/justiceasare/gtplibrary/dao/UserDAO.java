@@ -15,6 +15,18 @@ import java.util.regex.Pattern;
 
 public class UserDAO {
 
+    private Connection connection;
+    public UserDAO() {}
+    public UserDAO(Connection connection) {
+        this.connection = connection;
+    }
+    protected Connection getConnection() throws SQLException {
+        if (connection != null) {
+            return connection;
+        }
+        return DatabaseSource.getConnection();
+    }
+
     public List<User> getAllUsers() {
         String query = "SELECT * FROM User";
         List<User> users = new ArrayList<>();
@@ -136,7 +148,7 @@ public class UserDAO {
     }
 
     // Checks if a user with the given user ID exists
-    private boolean userExistsById(int userId) {
+    public boolean userExistsById(int userId) {
         String query = "SELECT COUNT(*) FROM User WHERE user_id = ?";
         try (Connection connection = DatabaseSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {

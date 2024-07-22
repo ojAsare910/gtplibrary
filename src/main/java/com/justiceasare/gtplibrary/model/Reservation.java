@@ -29,6 +29,9 @@ public class Reservation {
         this.completed = completed;
     }
 
+    public Reservation() {
+    }
+
     // Getters and Setters
     public int getReservationId() {
         return reservationId;

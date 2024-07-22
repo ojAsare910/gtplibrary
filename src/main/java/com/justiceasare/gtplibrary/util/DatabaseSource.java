@@ -5,7 +5,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseSource {
-    private static final String URL = "jdbc:mysql://localhost:3306/librarymgmt";
+//    private static final String URL = "jdbc:mysql://localhost:3306/librarymgmt";
+    private static final String URL = "jdbc:mysql://localhost:3306/librarytestdb";
     private static final String USER = "libraryadmin";
     private static final String PASSWORD = "admin@1234";
 

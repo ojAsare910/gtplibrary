@@ -42,4 +42,29 @@ public class TransactionDAO {
 
         return transactions;
     }
+
+
+    public int getTransactionIdByReservationId(int reservationId) {
+        int transactionId = 0;
+        String query = "SELECT th.transaction_id\n" +
+                "    FROM transactionhistory th\n" +
+                "    JOIN book b ON th.book_id = b.book_id\n" +
+                "    JOIN user u ON th.user_id = u.user_id\n" +
+                "    JOIN Reservation r on b.book_id = R.book_id\n" +
+                "    WHERE r.reservation_id = ? ORDER BY th.transaction_id;";
+
+        try (Connection conn = DatabaseSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)){
+             stmt.setInt(1, reservationId);
+             try (ResultSet rs = stmt.executeQuery()) {
+                 if (rs.next()) {
+                     transactionId = rs.getInt("transaction_id");
+                 }
+             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return transactionId;
+    }
 }

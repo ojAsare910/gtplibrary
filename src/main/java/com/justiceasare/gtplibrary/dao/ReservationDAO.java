@@ -11,6 +11,21 @@ import java.util.List;
 
 public class ReservationDAO {
 
+    private Connection connection;
+
+    public ReservationDAO() {}
+
+    public ReservationDAO(Connection connection) {
+        this.connection = connection;
+    }
+
+    protected Connection getConnection() throws SQLException {
+        if (connection != null) {
+            return connection;
+        }
+        return DatabaseSource.getConnection();
+    }
+
     public List<Reservation> getAllReservations() {
         List<Reservation> reservations = new ArrayList<>();
         String query = "SELECT r.reservation_id, b.title AS book_title, u.username, r.reservation_type, r.reservation_date, r.is_completed " +
@@ -39,7 +54,8 @@ public class ReservationDAO {
         return reservations;
     }
 
-    public static boolean addReservation(Reservation reservation) {
+    public static int addReservation(Reservation reservation) {
+        int reservationId = 0;
         String addReservationQuery = "INSERT INTO Reservation (book_id, user_id, reservation_type, reservation_date, is_completed) VALUES (?, ?, ?, ?, ?)";
         String addTransactionQuery = "INSERT INTO TransactionHistory (book_id, user_id, reservation_type, transaction_date) VALUES (?, ?, ?, ?)";
 
@@ -51,7 +67,7 @@ public class ReservationDAO {
             Integer userId = getUserIdByUsername(reservation.getUsername());
 
             if (bookId == null || userId == null) {
-                return false; // Book or User not found
+                throw new IllegalArgumentException("Book or user cannot be null"); // Book or User not found
             }
 
             addReservationStmt.setInt(1, bookId);
@@ -64,7 +80,7 @@ public class ReservationDAO {
             if (rowsInserted > 0) {
                 ResultSet generatedKeys = addReservationStmt.getGeneratedKeys();
                 if (generatedKeys.next()) {
-                    int reservationId = generatedKeys.getInt(1);
+                    reservationId = generatedKeys.getInt(1);
                     reservation.setReservationId(reservationId);
 
                     // Insert transaction history
@@ -73,14 +89,12 @@ public class ReservationDAO {
                     addTransactionStmt.setString(3, reservation.getReservationType().name());
                     addTransactionStmt.setDate(4, Date.valueOf(reservation.getReservationDate()));
                     addTransactionStmt.executeUpdate();
-
-                    return true;
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;
+        return reservationId;
     }
 
     public static boolean updateReservation(Reservation reservation) {
@@ -181,22 +195,6 @@ public class ReservationDAO {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public boolean existsPatron(int patronId) {
-        String query = "SELECT COUNT(*) FROM patron WHERE user_id = ?";
-        try (Connection connection = DatabaseSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, patronId);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                int count = resultSet.getInt(1);
-                return count > 0;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 }
 
