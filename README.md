@@ -44,3 +44,5 @@ FXML Views: Define the graphical user interface using FXML markup.
 DAO Classes: Implement data access logic to interact with the MySQL database.
 Model Classes: Represent entities such as User, Book, Transaction, etc.
 Utilities: Include helper classes for database connection
+
+# Demo: https://www.loom.com/share/8ff63b0bdbce44509b0a949c9c36aede
