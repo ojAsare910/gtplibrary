@@ -20,18 +20,6 @@ public class Reservation {
         this.completed = completed;
     }
 
-    // Constructor without reservationId
-    public Reservation(String bookTitle, String username, ReservationType reservationType, LocalDate reservationDate, boolean completed) {
-        this.bookTitle = bookTitle;
-        this.username = username;
-        this.reservationType = reservationType;
-        this.reservationDate = reservationDate;
-        this.completed = completed;
-    }
-
-    public Reservation() {
-    }
-
     // Getters and Setters
     public int getReservationId() {
         return reservationId;

@@ -122,7 +122,6 @@ public class BookDAO {
 
         // Check if the book exists before updating
         if (!bookExistsById(book.getBookId())) {
-            System.out.println("Book does not exist.");
             return false;
         }
 

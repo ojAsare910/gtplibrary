@@ -68,9 +68,7 @@ public class UserDAOTest {
         if (connection != null && !connection.isClosed()) {
             connection.close();
         }
-
     }
-
 
     @Test
     void getAllUsers() {
@@ -204,7 +202,6 @@ public class UserDAOTest {
         } catch (SQLException e) {
             // Expected exception
         }
-
         UserDAO badUserDAO = new UserDAO(badConnection);
         List<User> users = badUserDAO.getAllUsers();
         assertFalse(users.isEmpty());

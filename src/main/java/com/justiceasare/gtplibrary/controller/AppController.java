@@ -620,7 +620,7 @@ public class AppController {
                     return null;
                 }
 
-                Reservation newReservation = new Reservation(bookTitle, username, reservationType, reservationDate, false);
+                Reservation newReservation = new Reservation(0, bookTitle, username, reservationType, reservationDate, false);
                 if (ReservationDAO.addReservation(newReservation) > 0) {
                     reservationData.add(newReservation);
                     reservationTableView.refresh();

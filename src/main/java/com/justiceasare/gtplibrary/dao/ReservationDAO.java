@@ -196,5 +196,34 @@ public class ReservationDAO {
         }
         return null;
     }
+
+    public Reservation getReservationById(int reservationId) {
+        String query = "SELECT r.reservation_id, b.title AS book_title, u.username, r.reservation_type, r.reservation_date, r.is_completed " +
+                "FROM Reservation r " +
+                "JOIN Book b ON r.book_id = b.book_id " +
+                "JOIN User u ON r.user_id = u.user_id " +
+                "WHERE r.reservation_id = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, reservationId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return new Reservation(
+                            resultSet.getInt("reservation_id"),
+                            resultSet.getString("book_title"),
+                            resultSet.getString("username"),
+                            ReservationType.valueOf(resultSet.getString("reservation_type")),
+                            resultSet.getDate("reservation_date").toLocalDate(),
+                            resultSet.getBoolean("is_completed")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null; // Return null if no reservation found with the given ID
+    }
 }
 
